@@ -16,7 +16,8 @@
 para_PSmodel_L = 1 # for test statistic in selecting main effects
 para_PSmodel_Q = 2.71 # for test statistic in selecting 2nd-order terms
 
-fn_estPS_IR2015 = function(dat, C_L = para_PSmodel_L, C_Q = para_PSmodel_Q) {
+fn_estPS_IR2015 = function(dat, C_L = para_PSmodel_L, C_Q = para_PSmodel_Q,
+                           progress_message = FALSE) {
   # Select main effects and their 2nd-order terms (squared terms and 2-way)
   #   interaction terms for logistic regression and PS estimation.
   # 
@@ -60,10 +61,10 @@ fn_estPS_IR2015 = function(dat, C_L = para_PSmodel_L, C_Q = para_PSmodel_Q) {
     
     if (LRT_stat[which.max(LRT_stat)] > C_L) {
       term_new = names(LRT_stat)[which.max(LRT_stat)]
-      # print(paste('L pass: Select ', term_new, '.', sep = '')) # for debugging
+      if (progress_message) {print(paste('L pass: Select ', term_new, '.', sep = ''))}
     } else {
       term_new = NULL
-      # print('L pass: No term selected!') # for debugging
+      if (progress_message) {print('L pass: No term selected!')}
       break  
     }
     
@@ -74,7 +75,7 @@ fn_estPS_IR2015 = function(dat, C_L = para_PSmodel_L, C_Q = para_PSmodel_Q) {
     
   }
   
-  # print(paste('L pass selected: ', paste(term_selected, collapse = ', '), sep = '')) # for debugging
+  if (progress_message) {print(paste('L pass selected: ', paste(term_selected, collapse = ', '), sep = ''))}
   
   # The Q pass
   
@@ -95,26 +96,28 @@ fn_estPS_IR2015 = function(dat, C_L = para_PSmodel_L, C_Q = para_PSmodel_Q) {
                                  sep = ''))
     model_now = glm(formu_now, data = dat, family = binomial)
     lnLik_now = logLik(model_now)
-
+    
     lnLik_candi = sapply(term_candi, fn_lnLik_new)
-
+    
     LRT_stat = 2 * (lnLik_candi - lnLik_now)
-
+    
     if (LRT_stat[which.max(LRT_stat)] > C_Q) {
       term_new = names(LRT_stat[which.max(LRT_stat)])
-      # print(paste('Q pass: Select ', term_new, '.', sep = '')) # for debugging
+      if (progress_message) {print(paste('Q pass: Select ', term_new, '.', sep = ''))}
     } else {
       term_new = NULL
-      # print('Q pass: No term selected!') # for debugging
+      if (progress_message) {print('Q pass: No term selected!')}
       break
     }
-
+    
     term_selected = union(term_selected, term_new)
     term_candi = setdiff(term_candi, term_new)
     
     if (length(term_candi) == 0) {break}
-  
+    
   }
+  
+  if (progress_message) {print(paste('Terms selected: ', paste(term_selected, collapse = ', '), sep = ''))}
   
   return(term_selected)
   
