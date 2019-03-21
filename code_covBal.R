@@ -1,6 +1,12 @@
 # code_covBal
 # Some functions for covariate balance checks
 
+
+# Under construction ------------------------------------------------------
+# Tasks to be done are listed here.
+# [ ] Review the details and polish fn_lnSRatio, fn_overlap
+
+
 # Functions for calculating balance statistics ----------------------------
 
 fn_stdDiff = function(W, cov) {
