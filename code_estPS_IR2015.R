@@ -87,8 +87,12 @@ fn_estPS_IR2015 = function(dat, C_L = para_PSmodel_L, C_Q = para_PSmodel_Q,
   term_candi_interact = outer(setdiff(term_selected, '1'),
                               setdiff(term_selected, '1'), 
                               paste, sep = ':')
-  term_candi = c(paste('I(', term_selected_num, '^2)', sep = ''), 
-                 as.vector(term_candi_interact[upper.tri(term_candi_interact)]))
+  if (length(term_selected_num) > 0) {
+    term_candi = c(paste('I(', term_selected_num, '^2)', sep = ''), 
+                   as.vector(term_candi_interact[upper.tri(term_candi_interact)]))  
+  } else if (length(term_selected_num) == 0) {
+    term_candi = as.vector(term_candi_interact[upper.tri(term_candi_interact)])
+  }
   
   while (TRUE) {
     formu_now = as.formula(paste('W ~ ', 
