@@ -12,7 +12,7 @@
 fn_stdDiff = function(W, cov) {
   # Calculate standardized difference in means
   # Input :
-  #   W = binary vector for treatment assignment (TRUE for treated)
+  #   W = binary vector for treatment assignment (1 for treated)
   #   cov = vector of covariate values_c
   # Output: numeric, standardized difference in means 
   # Reference: Imben and Rubin (2015)
@@ -20,6 +20,7 @@ fn_stdDiff = function(W, cov) {
   ### Under construction
   # [ ] What to do when (xbar_t != xbar_c) & ((ssq_t + ssq_c) == 0)
 
+  W = as.numeric(W) # in case W is logical
   
   if ((length(unique(W)) == 1) | 
       (sum(table(W) == 1) > 0)) { # Check for empty/singleton group
@@ -27,10 +28,10 @@ fn_stdDiff = function(W, cov) {
     myvalue = 0
   } else {  
 
-    xbar_t = mean(cov[W == TRUE])
-    xbar_c = mean(cov[W == FALSE])
-    ssq_t = var(cov[W == TRUE])
-    ssq_c = var(cov[W == FALSE])
+    xbar_t = mean(cov[W == 1], na.rm = TRUE)
+    xbar_c = mean(cov[W == 0], na.rm = TRUE)
+    ssq_t = var(cov[W == 1], na.rm = TRUE)
+    ssq_c = var(cov[W == 0], na.rm = TRUE)
 
     if ((ssq_t + ssq_c) > 0) {
       myvalue = (xbar_t - xbar_c) / sqrt((ssq_t + ssq_c)/2)
