@@ -6,4 +6,4 @@ This repo contains R code for functions that may be used for the design of obser
 - To subclassify experimental units based on their propensity scores (Imbens and Rubin 2015), and
 - To assess the covariate balance after matching/subclassification.
 
-
+The sub-directory Simulation_studies contains R code that implements simulation studies from 
