@@ -9,7 +9,7 @@
 
 # Functions for calculating balance statistics ----------------------------
 
-fn_stdDiff = function(W, X_vec) {
+fn_stdDiff = function(W, X_vec, use_abs = FALSE) {
   # Calculate standardized difference in means
   # Input :
   #   W = binary vector for treatment assignment (1 for treated)
@@ -43,6 +43,11 @@ fn_stdDiff = function(W, X_vec) {
       }
     }
   }
+  
+  if (use_abs) {
+    myvalue = abs(myvalue)
+  }
+  
   return(myvalue)
   
 }
@@ -128,7 +133,7 @@ fn_stdDiff_subAgg = function(W, X_vec, stra, by_trt = TRUE) {
 
 
 fn_covbal_hist = function(W, X_vec, 
-                          probability=TRUE, overlay=FALSE, 
+                          probability = TRUE, overlay = FALSE, 
                           xlab = 'Covariate', 
                           main = 'Comparative histograms',
                           include_legend = TRUE,
