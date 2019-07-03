@@ -11,14 +11,14 @@
 
 set.seed(1)
 
-para_r = 1 # 2, 3, 6 # Ratio of #control:#treated
+para_r = 6 # 1, 2, 3, 6 # Ratio of #control:#treated
 para_N_W1 = 50
 para_N_W0 = para_N_W1 * para_r
 para_N = para_N_W0 + para_N_W1
 
-para_p = 2 # 5, 20
+para_p = 20 # 2, 5, 20
 
-para_b = 0.5 # 1.0 # bias
+para_b = 1.0 # 0.5, 1.0 # bias
 para_mu_W1 = c(para_b, rep(0, para_p-1))
 para_mu_W0 = rep(0, para_p)
 
