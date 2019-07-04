@@ -139,6 +139,8 @@ fn_covbal_hist = function(W, X_vec,
                           include_legend = TRUE,
                           col = para_col) {
   # Comparative histograms for a continuous covariate.
+  # [TODO] Allow outside change of plot panel 
+  #   Currently overlay= would determine "par(mfrow=))"
   
   plot_W0 = hist(X_vec[W == 0], plot = FALSE)
   plot_W1 = hist(X_vec[W == 1], plot = FALSE)
@@ -168,5 +170,19 @@ fn_covbal_hist = function(W, X_vec,
   }
   
   par(mfrow = c(1, 1))
+  
+}
+
+fn_covbal_scatter2d = function(W, X_vec, Y_vec, stra, 
+                               label_stra = TRUE, col = para_col) {
+  # Scatter plot of two covariates, colored by the treatment status, 
+  #   labeled by the strata.
+  
+  if (label_stra) {
+    plot(X_vec, Y_vec, col = 'white', pch = 16)
+    text(X_vec, Y_vec, labels = stra, col = para_col[W + 1])
+  } else {
+    plot(X_vec, Y_vec, col = para_col[W + 1], pch = 16)
+  }
   
 }
