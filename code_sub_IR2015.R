@@ -70,8 +70,15 @@ fn_toInt = function(x) {
 fn_check = function(dat, colV, cut_tpval, cut_size_grp, cut_size_str, print_message=TRUE) {
   # For a given stratum, check whether a further split is needed.
   # The function is a modified version of fn_check() in "Code 20181105 stepwise match - simple.R".
+  # [TODO] Change dat$W to allow the user-specified treatment covariate.
   
-  criterion_t = (t.test(dat[, colV] ~ dat$W)$p.value < cut_tpval)
+  if ((length(unique(dat[dat$W == 0, colV])) == 1) & 
+      (length(unique(dat[dat$W == 1, colV])) == 1)) {
+    criterion_t = FALSE
+  } else {
+    criterion_t = (t.test(dat[, colV] ~ dat$W)$p.value < cut_tpval)
+  }
+  
   
   Vsplit = median(dat[, colV])
   n_c_l = sum((dat$W == 0) & (dat[, colV] < Vsplit))
