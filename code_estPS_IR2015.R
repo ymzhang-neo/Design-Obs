@@ -49,6 +49,8 @@ fn_estPS_IR2015 = function(dat, C_L = para_PSmodel_L, C_Q = para_PSmodel_Q,
   
   while (TRUE) {
     
+    if (length(term_candi) == 0) {break}
+    
     formu_now = as.formula(paste('W ~ ', 
                                  paste(term_selected, collapse = ' + '), 
                                  sep = ''))
@@ -70,8 +72,6 @@ fn_estPS_IR2015 = function(dat, C_L = para_PSmodel_L, C_Q = para_PSmodel_Q,
     
     term_selected = union(term_selected, term_new)
     term_candi = setdiff(term_candi, term_new)
-    
-    if (length(term_candi) == 0) {break}
     
   }
   
@@ -95,6 +95,9 @@ fn_estPS_IR2015 = function(dat, C_L = para_PSmodel_L, C_Q = para_PSmodel_Q,
   }
   
   while (TRUE) {
+    
+    if (length(term_candi) == 0) {break}
+    
     formu_now = as.formula(paste('W ~ ', 
                                  paste(term_selected, collapse = ' + '), 
                                  sep = ''))
@@ -116,8 +119,6 @@ fn_estPS_IR2015 = function(dat, C_L = para_PSmodel_L, C_Q = para_PSmodel_Q,
     
     term_selected = union(term_selected, term_new)
     term_candi = setdiff(term_candi, term_new)
-    
-    if (length(term_candi) == 0) {break}
     
   }
   
