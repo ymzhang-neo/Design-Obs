@@ -671,11 +671,13 @@ fn_vis_stdDiff_wide = function(dat, W=NULL, stra1, # stra2,
   
   if (is.null(W)) {
     dat_X = dat[, setdiff(colnames(dat), 'W')]
-  W = dat[, 'W']
+    W = dat[, 'W']
   } else if (is.character(W)) {
     dat_X = dat[, setdiff(colnames(dat), W)]
-  W = dat[, W]
-  } 
+    W = dat[, W]
+  } else {
+    dat_X = dat
+  }
   
   n_covariate = ncol(dat_X)
   
@@ -707,7 +709,7 @@ fn_vis_stdDiff_wide = function(dat, W=NULL, stra1, # stra2,
   #              (abs(covbal2) > vertical_ref[2])] = 'orangered'
   
   if (is.null(ylim)) {
-    ylim = max(range(covbal1, na.rm = TRUE)) * c(-1, 1)
+    ylim = max(range(abs(covbal1), na.rm = TRUE)) * c(-1, 1)
     # xlim = max(range(covbal1, covbal2, na.rm = TRUE)) * c(-1, 1)
   }
   
