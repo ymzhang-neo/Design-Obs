@@ -60,9 +60,13 @@ fn_lnSRatio = function(W, X_vec) {
   #   X_vec = vector of covariate values_c
   # Output:
   # Reference: 
+
+  if (class(W) == 'logical') {
+    W = as.numeric(W)
+  }
   
-  ssq_t = var(X_vec[W == TRUE])
-  ssq_c = var(X_vec[W == FALSE])
+  ssq_t = var(X_vec[W == 1])
+  ssq_c = var(X_vec[W == 0])
   myvalue = log(sqrt(ssq_t / ssq_c))
   return(myvalue)
 
@@ -88,7 +92,7 @@ fn_overlap = function(W, X_vec, alpha = 0.05) {
 }
 
 
-fn_stdDiff_subAgg = function(W, X_vec, stra, by_trt = TRUE) {
+fn_stdDiff_subAgg = function(W, X_vec, stra, by_trt = TRUE, use_abs = FALSE) {
   # Compute the aggregated stdDiff of given stratification
   # Input :
   #   W = binary vector for treatment assignment (TRUE for treated)
@@ -108,7 +112,7 @@ fn_stdDiff_subAgg = function(W, X_vec, stra, by_trt = TRUE) {
   dat_split = split(data.frame(W=W, X_vec=X_vec), stra)
   
   stdDiff_byStra = sapply(dat_split, function(oneStra) {
-    fn_stdDiff(W = oneStra$W, X_vec = oneStra$X_vec)
+    fn_stdDiff(W = oneStra$W, X_vec = oneStra$X_vec, use_abs = use_abs)
   })
 
   if (by_trt) {
@@ -138,6 +142,7 @@ fn_stdDiff_overall = function(covbal) {
 
 # Visualization -----------------------------------------------------------
 
+para_col = c(rgb(0,0,1,1/2), rgb(1,0,0,1/2))
 
 fn_covbal_hist = function(W, X_vec, 
                           probability = TRUE, overlay = FALSE, 
@@ -755,4 +760,36 @@ fn_vis_stdDiff_wide = function(dat, W=NULL, stra1, # stra2,
   title(sub = paste0('Overall balance: ', round(covbal1_overall, decimals)),
         adj = 1, line = 3, font = 1)
   
+}
+
+fn_vis_comp_segment = function(covbal1, covbal2, colSegment = TRUE, 
+                               user_ylab = NULL, threshold = 0.1, 
+                               user_main = NULL, user_ylim = NULL) {
+  # Visualize the before and after covariate balance, similar to Fig. 2 of 
+  # Stuart (2010).
+
+  if (is.null(user_ylab)) {
+    user_ylab = 'Covariate Balance'
+  }
+  
+  if (is.null(user_ylim)) {
+    user_ylim = c(min(0, covbal1, covbal2), max(covbal1, covbal2))
+  }
+
+  plot(x = rep(1.1, length(covbal1)), y = covbal1, xlim = c(1, 3), xaxt = 'n', 
+       ylim = user_ylim, xlab = '', ylab = user_ylab, main = user_main)
+  points(x = rep(2.9, length(covbal2)), y = covbal2)
+  axis(side = 1, at = c(1.1, 2.9), labels = c('Initial', 'Designed'))
+
+  X_col = rep('gray', length(covbal1))
+  if (colSegment) {
+    X_col[(covbal1 > covbal2) & (covbal2 <= threshold)] = 'darkgreen'
+    X_col[(covbal1 > covbal2) & (covbal2 > threshold)] = 'green'
+    X_col[(covbal1 < covbal2) & (covbal2 <= threshold)] = 'gray'
+    X_col[(covbal1 < covbal2) & (covbal2 > threshold)] = 'red'
+  }
+
+  segments(x0 = rep(1.15, length(covbal1)), y0 = covbal1,
+           x1 = rep(2.85, length(covbal2)), y1 = covbal2,
+           col = X_col)
 }
