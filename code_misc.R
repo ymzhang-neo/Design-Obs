@@ -8,13 +8,13 @@
 # column of categorical variable.
 
 
-fn_getDummies = function(x, colName = 'x') {
+fn_getDummies = function(x, refLevel = NULL) {
   # Get binary dummy variable for x
   #
   # Parameters
   #   x: a categorical covariate
   #     x could be a factor, a vector of character values, or a vector 
-  #     of discrete numeric values.  The levels of x will be discarded.
+  #     of discrete numeric values.  
   #
   # Returns
   #   result: a matrix of binary dummy variables
@@ -25,22 +25,23 @@ fn_getDummies = function(x, colName = 'x') {
   # - The function does not check whether x is indeed categorical.
   # - We assume that the original covariate names do not contain string "_dummy_".
   
-  if (is.factor(x)) {
-    x = levels(x)[x]
+  if (!is.factor(x)) {
+    x = factor(x)
   }
   
-  if (all(sapply(x, is.numeric))) {
-    x = as.character(x)
+  if (!is.null(refLevel)) {
+    if (!(refLevel %in% levels(x))) {
+      levels(x) = c(refLevel, levels(x))
+    } 
+    x = relevel(x, refLevel)
   }
   
-  dummy_y = runif(length(x))
-  
-  result = model.matrix(dummy_y ~ x)[, -1]
+  result = model.matrix(~ x)[, -1]
   # attr(result, which = 'assign') = NULL
   # attr(result, which = 'contrasts') = NULL
   
   result_colnames = colnames(result)
-  colnames(result) = gsub(colName, '_dummy_', result_colnames)
+  colnames(result) = gsub('x', '_dummy_', result_colnames)
   
   return(result)
 }
