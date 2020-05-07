@@ -12,6 +12,8 @@
 # [ ] Shall we include a version with the weakly informative prior glm?
 # [x] Will there be issues in calculating log-likelihoods (e.g., NA/Inf)?
 #     - It seems that the problem was no checking of the empty term_candi.
+# [ ] The code should allow users' own treatment column name (instead of 
+#     the hard-coded "W").
 
 para_PSmodel_L = 1 # for test statistic in selecting main effects
 para_PSmodel_Q = 2.71 # for test statistic in selecting 2nd-order terms
