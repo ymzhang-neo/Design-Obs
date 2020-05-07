@@ -37,11 +37,11 @@ fn_recTrim = function(dat, colTrt, colV, trim_ctrl_only = FALSE) {
   value_v = dat[, colV]
   
   if (trim_ctrl_only) {
-    range_v = range(value_v[ind_trt == 1])
+    range_v = range(value_v[ind_trt == 1], na.rm = TRUE)
   } else {
-    range_v_c = range(value_v[ind_trt == 0])
-    range_v_t = range(value_v[ind_trt == 1])
-    range_v = c(max(range_v_c[1], range_v_t[1]), min(range_v_c[2], range_v_t[2]))  
+    range_v_c = range(value_v[ind_trt == 0], na.rm = TRUE)
+    range_v_t = range(value_v[ind_trt == 1], na.rm = TRUE)
+    range_v = c(max(range_v_c[1], range_v_t[1], na.rm = TRUE), min(range_v_c[2], range_v_t[2], na.rm = TRUE))  
   }
   
   ind_keep = ((value_v >= range_v[1]) & (value_v <= range_v[2]))
