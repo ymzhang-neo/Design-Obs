@@ -121,8 +121,6 @@ dat_Y$Y_obs_mean = dat_W * dat_Y$Y1_mean + (1 - dat_W) * dat_Y$Y0_mean
 dat_Y$Y_mis_mean = (1 - dat_W) * dat_Y$Y1_mean + dat_W * dat_Y$Y0_mean
 dat_Y$Y_obs = dat_Y$Y_obs_mean + rnorm(n_sample, sd = para_Y_sigma_error)
 dat_Y$Y_mis = dat_Y$Y_mis_mean + rnorm(n_sample, sd = para_Y_sigma_error)
-dat_Y$Y0 = (1 - dat_W) * dat_Y$Y_obs + dat_W * dat_Y$Y_mis
-dat_Y$Y1 = dat_W * dat_Y$Y_obs + (1 - dat_W) * dat_Y$Y_mis
 
 dat_true = data.frame(dat_X, PS = dat_PS, W = dat_W, dat_Y)
 
