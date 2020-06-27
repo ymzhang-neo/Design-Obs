@@ -74,7 +74,7 @@ fn_stdDiff_binary = function(W, X_vec, use_abs = FALSE) {
     var_t = xbar_t * (1 - xbar_t)
     var_c = xbar_c * (1 - xbar_c)
     
-    if ((var_t + var_c) > 0) {
+    if ((ssq_t + ssq_c) > 0) {
       myvalue = (xbar_t - xbar_c) / sqrt((var_t + var_c)/2)
     } else if ((var_t + var_t) == 0) {
       if (xbar_t == xbar_c) {
