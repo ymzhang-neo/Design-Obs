@@ -10,15 +10,15 @@
 # Functions for calculating balance statistics ----------------------------
 
 fn_stdDiff = function(W, X_vec, use_abs = FALSE) {
-  # Calculate standardized difference in means
-  # Input :
+  # Calculate standardized difference in means of a numeric variable
+  # Input
   #   W = binary vector for treatment assignment (1 for treated)
   #   X_vec = vector of covariate values_c
-  # Output: numeric, standardized difference in means 
+  # Output
+  #   numeric, standardized difference in means 
+  # Note
+  #   This function does not work for binary covariates.
   # Reference: Imben and Rubin (2015)
-
-  ### Under construction
-  # [ ] What to do when (xbar_t != xbar_c) & ((ssq_t + ssq_c) == 0)
 
   W = as.numeric(W) # in case W is logical
   
@@ -36,6 +36,47 @@ fn_stdDiff = function(W, X_vec, use_abs = FALSE) {
     if ((ssq_t + ssq_c) > 0) {
       myvalue = (xbar_t - xbar_c) / sqrt((ssq_t + ssq_c)/2)
     } else if ((ssq_t + ssq_c) == 0) {
+      if (xbar_t == xbar_c) {
+        myvalue = 0
+      } else if (xbar_t != xbar_c) {
+        myvalue = xbar_t - xbar_c
+      }
+    }
+  }
+  
+  if (use_abs) {
+    myvalue = abs(myvalue)
+  }
+  
+  return(myvalue)
+  
+}
+
+
+fn_stdDiff_binary = function(W, X_vec, use_abs = FALSE) {
+  # Calculate standardized difference in means of a binary variable
+  # Input :
+  #   W = binary vector for treatment assignment (1 for treated)
+  #   X_vec = vector of binary covariate (values 0, 1)
+  # Output: numeric, standardized difference in means 
+  # Reference: Austin (2009)
+  
+  W = as.numeric(W) # in case W is logical
+  
+  if ((length(unique(W)) == 1) | 
+      (sum(table(W) == 1) > 0)) { # Check for empty/singleton group
+    # This only happens to the discarded stratum, thanks to the PSIR algorithm.
+    myvalue = 0
+  } else {  
+    
+    xbar_t = mean(X_vec[W == 1], na.rm = TRUE)
+    xbar_c = mean(X_vec[W == 0], na.rm = TRUE)
+    var_t = xbar_t * (1 - xbar_t)
+    var_c = xbar_c * (1 - xbar_c)
+    
+    if ((var_t + var_c) > 0) {
+      myvalue = (xbar_t - xbar_c) / sqrt((var_t + var_c)/2)
+    } else if ((var_t + var_t) == 0) {
       if (xbar_t == xbar_c) {
         myvalue = 0
       } else if (xbar_t != xbar_c) {
