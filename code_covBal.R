@@ -172,6 +172,45 @@ fn_stdDiff_subAgg = function(W, X_vec, stra, by_trt = TRUE, use_abs = FALSE) {
   
 }
 
+fn_stdDiff_binary_subAgg = function(W, X_vec, stra, by_trt = TRUE, use_abs = FALSE) {
+  # Compute the aggregated stdDiff of given stratification
+  # Input :
+  #   W = binary vector for treatment assignment (TRUE for treated)
+  #   X_vec = vector of covariate values_c
+  #   stra = vector of integer-valued stratum labels
+  #   by_trt = logical, aggregation by treated group sizes if TRUE,
+  #     aggregation by stratum sizes if FALSE
+  # Output: numeric, stdDiff in means aggregated over strata
+  
+  # Under construction
+  # [ ] What to do when stra == 0? [temp] Ignore stra == 0
+  
+  W = W[stra != 0]
+  X_vec = X_vec[stra != 0]
+  stra = stra[stra != 0]
+  
+  dat_split = split(data.frame(W=W, X_vec=X_vec), stra)
+  
+  stdDiff_byStra = sapply(dat_split, function(oneStra) {
+    fn_stdDiff_binary(W = oneStra$W, X_vec = oneStra$X_vec, use_abs = use_abs)
+  })
+  
+  if (by_trt) {
+    straWt_num = sapply(dat_split, function(oneStra) {sum(oneStra$W)})
+    straWt = straWt_num / sum(straWt_num)
+  } else {
+    straWt_num = sapply(dat_split, function(oneStra) {length(oneStra$W)})
+    straWt = straWt_num / sum(straWt_num)
+  }
+  
+  stdDiff_agg = sum(stdDiff_byStra * straWt)
+  
+  return(list(stdDiff_byStra = stdDiff_byStra, 
+              straWt = straWt, 
+              stdDiff_agg = stdDiff_agg))
+  
+}
+
 fn_stdDiff_overall = function(covbal) {
   # Compute an overall balance measure based on those of all covariates.
   
